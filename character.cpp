@@ -10,6 +10,9 @@ void Character::setScreenPos(int winWidth, int winHeight)
 
 void Character::tick(float deltaTime)
 {
+
+    worldPosLastFrame = worldPos;
+
     Vector2 direction{0};
     if (IsKeyDown(KEY_A))
         direction.x -= 1.0;
@@ -52,4 +55,8 @@ Character::Character()
 {
     width = texture.width / maxFrames;
     height = texture.height;
+}
+
+void Character::undoMovement(){
+    worldPos = worldPosLastFrame;
 }
