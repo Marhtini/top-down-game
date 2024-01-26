@@ -19,9 +19,11 @@ int main()
 
     // Instantiate Knight
     Character knight{WINDOW_DIM[0], WINDOW_DIM[1]};
-    
-    // Instantiate Rock
-    Prop rock{Vector2{0.f, 0.f}, LoadTexture("nature_tileset/rock.png")};
+
+    // Prop array
+    Prop props[2]{
+        Prop{Vector2{600.f, 300.f}, LoadTexture("nature_tileset/rock.png")},
+        Prop{Vector2{400.f, 500.f}, LoadTexture("nature_tileset/log.png")}};
 
     while (!WindowShouldClose())
     {
@@ -32,19 +34,30 @@ int main()
 
         // Draw the map
         DrawTextureEx(map, mapPos, 0.0, mapScale, WHITE);
-        
+
         // Render props
-        rock.Render(knight.getWorldPos());
+        for (auto prop : props)
+        {
+            prop.Render(knight.getWorldPos());
+        }
 
         knight.tick(GetFrameTime());
 
         // Check map bounds
-        if (knight.getWorldPos().x < 0.f || 
-        knight.getWorldPos().y < 0.f || 
-        knight.getWorldPos().x + WINDOW_DIM[0] > map.width * mapScale || 
-        knight.getWorldPos().y + WINDOW_DIM[1] > map.height * mapScale)
+        if (knight.getWorldPos().x < 0.f ||
+            knight.getWorldPos().y < 0.f ||
+            knight.getWorldPos().x + WINDOW_DIM[0] > map.width * mapScale ||
+            knight.getWorldPos().y + WINDOW_DIM[1] > map.height * mapScale)
         {
             knight.undoMovement();
+        }
+
+        // Check prop collision
+        for (auto prop : props)
+        {
+            if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec())){
+                knight.undoMovement();
+            }
         }
 
         EndDrawing();

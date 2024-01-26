@@ -51,11 +51,21 @@ Character::Character(int winWidth, int winHeight) // Constructor
 
     screenPos = {
         static_cast<float>(winWidth) / 2.0f - scale * (0.5f * width),
-        static_cast<float>(winHeight) / 2.0f - scale * (0.5f * height)
-        };
+        static_cast<float>(winHeight) / 2.0f - scale * (0.5f * height)};
 }
 
 void Character::undoMovement()
 {
     worldPos = worldPosLastFrame;
+}
+
+Rectangle Character::getCollisionRec()
+{
+    return Rectangle
+    {
+        screenPos.x,
+        screenPos.y,
+        width *scale,
+        height *scale
+    };
 }
