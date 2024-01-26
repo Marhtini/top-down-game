@@ -2,6 +2,7 @@
 #include "raymath.h"
 #include "character.h"
 #include "prop.h"
+#include "enemy.h"
 
 int main()
 {
@@ -19,6 +20,9 @@ int main()
 
     // Instantiate Knight
     Character knight{WINDOW_DIM[0], WINDOW_DIM[1]};
+
+    // Instantiate Goblin
+    Enemy goblin{Vector2{0.f, 0.f}, LoadTexture("characters/goblin_idle_spritesheet.png"), LoadTexture("characters/goblin_run_spritesheet")};
 
     // Prop array
     Prop props[2]{
@@ -55,10 +59,13 @@ int main()
         // Check prop collision
         for (auto prop : props)
         {
-            if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec())){
+            if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
+            {
                 knight.undoMovement();
             }
         }
+
+        goblin.tick(GetFrameTime());
 
         EndDrawing();
     }
