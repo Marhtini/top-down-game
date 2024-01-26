@@ -17,8 +17,7 @@ int main()
     SetTargetFPS(60);
 
     // Instantiate Knight
-    Character knight{};
-    knight.setScreenPos(WINDOW_DIM[0], WINDOW_DIM[1]);
+    Character knight{WINDOW_DIM[0], WINDOW_DIM[1]};
 
     while (!WindowShouldClose())
     {
