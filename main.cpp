@@ -1,36 +1,81 @@
 #include <raylib.h>
 #include "raymath.h"
 
-class Character{
-    public:
-        Vector2 getWorldPos(){ return worldPos;}
-    
-    private:
-        Texture2D texture;
-        Texture2D idle;
-        Texture2D run;
-        Vector2 screenPos;
-        Vector2 worldPos;
-        // 1: facing right, -1: facing left.
-        float rightLeft{1.f};
-        // Animation variables
-        float runningTime{0};
-        int frame{0};
-        const int MAXFRAMES{6};
-        const float UPDATETIME{1.f/12.f};
+class Character
+{
+public:
+    Vector2 getWorldPos() { return worldPos; }
+    void setScreenPos(int winWidth, int winHeight);
+    void tick(float deltaTime);
 
+private:
+    Texture2D texture{LoadTexture("characters/knight_idle_spritesheet.png")};
+    Texture2D idle{LoadTexture("characters/knight_idle_spritesheet.png")};
+    Texture2D run{LoadTexture("characters/knight_run_spritesheet.png")};
+    Vector2 screenPos;
+    Vector2 worldPos;
+    // 1: facing right, -1: facing left.
+    float rightLeft{1.f};
+    // Animation variables
+    float runningTime{0};
+    int frame{0};
+    const int MAXFRAMES{6};
+    const float UPDATETIME{1.f / 12.f};
+    const float SPEED{4.f};
 };
 
+void Character::setScreenPos(int winWidth, int winHeight)
+{
+    screenPos = {
+        (float)winWidth / 2.0f - 4.0f * (0.5f * (float)texture.width / 6.0f),
+        (float)winHeight / 2.0f - 4.0f * (0.5f * (float)texture.height)};
+}
 
-int main(){
+void Character::tick(float deltaTime)
+{
+    Vector2 direction{0};
+    if (IsKeyDown(KEY_A))
+        direction.x -= 1.0;
+    if (IsKeyDown(KEY_D))
+        direction.x += 1.0;
+    if (IsKeyDown(KEY_W))
+        direction.y -= 1.0;
+    if (IsKeyDown(KEY_S))
+        direction.y += 1.0;
+    if (Vector2Length(direction) != 0.0)
+    {
+        // set worldPos = worldPos + direction
+        worldPos = Vector2Subtract(worldPos, Vector2Scale(Vector2Normalize(direction), SPEED));
+        // check if left or right
+        direction.x < 0.f ? rightLeft = -1.f : rightLeft = 1.f;
+        texture = run;
+    }
+    else
+    {
+        texture = idle;
+    }
+
+    // update animation frame
+    runningTime += deltaTime;
+    if (runningTime >= UPDATETIME)
+    {
+        frame++;
+        runningTime = 0.f;
+        if (frame > MAXFRAMES)
+            frame = 0;
+    }
+}
+
+int main()
+{
 
     const int WINDOW_DIM[2]{384, 384};
     InitWindow(WINDOW_DIM[0], WINDOW_DIM[1], "Top Down Game!");
-    
+
     Texture2D map = LoadTexture("nature_tileset/worldmap.png");
     float mapX{0};
     Vector2 mapPos{mapX, 0.0};
-    
+
     // Movement speed (scale)
     float speed{4.0};
 
@@ -39,9 +84,8 @@ int main(){
     Texture2D knight_run = LoadTexture("characters/knight_run_spritesheet.png");
 
     Vector2 knightPos{
-        (float)WINDOW_DIM[0]/2.0f - 4.0f * (0.5f * (float)knight_idle.width/6.0f),
-        (float)WINDOW_DIM[1]/2.0f - 4.0f * (0.5f * (float)knight_idle.height)
-    };
+        (float)WINDOW_DIM[0] / 2.0f - 4.0f * (0.5f * (float)knight_idle.width / 6.0f),
+        (float)WINDOW_DIM[1] / 2.0f - 4.0f * (0.5f * (float)knight_idle.height)};
 
     // 1: facing right, -1: facing left.
     float rightLeft{1.f};
@@ -50,29 +94,35 @@ int main(){
     float runningTime{0};
     int frame{0};
     const int MAXFRAMES{6};
-    const float UPDATETIME{1.f/12.f};
+    const float UPDATETIME{1.f / 12.f};
 
     SetTargetFPS(60);
 
-    while(!WindowShouldClose()){
+    while (!WindowShouldClose())
+    {
 
         BeginDrawing();
         ClearBackground(WHITE);
 
         Vector2 direction{0};
-        if (IsKeyDown(KEY_A)) direction.x -= 1.0;
-        if (IsKeyDown(KEY_D)) direction.x += 1.0;
-        if (IsKeyDown(KEY_W)) direction.y -= 1.0;
-        if (IsKeyDown(KEY_S)) direction.y += 1.0;
-        if (Vector2Length(direction) != 0.0){
+        if (IsKeyDown(KEY_A))
+            direction.x -= 1.0;
+        if (IsKeyDown(KEY_D))
+            direction.x += 1.0;
+        if (IsKeyDown(KEY_W))
+            direction.y -= 1.0;
+        if (IsKeyDown(KEY_S))
+            direction.y += 1.0;
+        if (Vector2Length(direction) != 0.0)
+        {
             // set mapPos = mapPos - direction
             mapPos = Vector2Subtract(mapPos, Vector2Scale(Vector2Normalize(direction), speed));
             // check if left or right
             direction.x < 0.f ? rightLeft = -1.f : rightLeft = 1.f;
             knight = knight_run;
-
         }
-        else{
+        else
+        {
             knight = knight_idle;
         }
 
@@ -81,10 +131,12 @@ int main(){
 
         // update animation frame
         runningTime += GetFrameTime();
-        if (runningTime >= UPDATETIME){
+        if (runningTime >= UPDATETIME)
+        {
             frame++;
             runningTime = 0.f;
-            if (frame > MAXFRAMES) frame = 0;
+            if (frame > MAXFRAMES)
+                frame = 0;
         }
 
         // Draw the character
