@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include "raymath.h"
 #include "character.h"
+#include "prop.h"
 
 int main()
 {
@@ -8,7 +9,7 @@ int main()
     const int WINDOW_DIM[2]{384, 384};
     InitWindow(WINDOW_DIM[0], WINDOW_DIM[1], "Top Down Game!");
 
-    Texture2D map = LoadTexture("nature_tileset/worldmap.png");
+    Texture2D map = LoadTexture("nature_tileset/OpenWorldMap24x24.png");
     float mapX{0};
     Vector2 mapPos{mapX, 0.0};
 
@@ -18,6 +19,9 @@ int main()
 
     // Instantiate Knight
     Character knight{WINDOW_DIM[0], WINDOW_DIM[1]};
+    
+    // Instantiate Rock
+    Prop rock{Vector2{0.f, 0.f}, LoadTexture("nature_tileset/rock.png")};
 
     while (!WindowShouldClose())
     {
@@ -28,6 +32,9 @@ int main()
 
         // Draw the map
         DrawTextureEx(map, mapPos, 0.0, mapScale, WHITE);
+        
+        // Render props
+        rock.Render(knight.getWorldPos());
 
         knight.tick(GetFrameTime());
 
