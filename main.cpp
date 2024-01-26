@@ -22,7 +22,13 @@ int main()
     Character knight{WINDOW_DIM[0], WINDOW_DIM[1]};
 
     // Instantiate Goblin
-    Enemy goblin{Vector2{0.f, 0.f}, LoadTexture("characters/goblin_idle_spritesheet.png"), LoadTexture("characters/goblin_run_spritesheet")};
+    Enemy goblin{
+        Vector2{0.f, 0.f}, 
+        LoadTexture("characters/goblin_idle_spritesheet.png"), 
+        LoadTexture("characters/goblin_run_spritesheet")
+    };
+
+    goblin.setTarget(&knight);
 
     // Prop array
     Prop props[2]{
