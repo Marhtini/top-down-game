@@ -17,13 +17,18 @@ Vector2 Character::getScreenPos()
 
 void Character::tick(float deltaTime)
 {
+    // Are you dead?
+    if (!getAlive()) return;
+
     float rotation{};
 
-    if (rightLeft > 0){
-        rotation = 35.f;
+    if (rightLeft > 0)
+    {
+        rotation = IsMouseButtonDown(MOUSE_LEFT_BUTTON) ? 35.f : 0.f;
     }
-    else{
-        rotation = -35.f;
+    else
+    {
+        rotation = IsMouseButtonDown(MOUSE_LEFT_BUTTON) ? -35.f : 0.f;
     }
 
     if (IsKeyDown(KEY_A))
