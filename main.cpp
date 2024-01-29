@@ -25,7 +25,20 @@ int main()
         Vector2{},
         LoadTexture("characters/goblin_idle_spritesheet.png"),
         LoadTexture("characters/goblin_run_spritesheet.png")};
-    goblin.setTarget(&knight);
+
+    Enemy slime{
+        Vector2{},
+        LoadTexture("characters/slime_idle_spritesheet.png"),
+        LoadTexture("characters/slime_run_spritesheet.png")};
+
+    Enemy *enemies[]{
+        &goblin,
+        &slime};
+
+    for (auto enemy : enemies)
+    {
+        enemy->setTarget(&knight);
+    }
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -44,12 +57,14 @@ int main()
             prop.Render(knight.getWorldPos());
         }
 
-        if(!knight.getAlive()){ // knight is dead
+        if (!knight.getAlive())
+        { // knight is dead
             DrawText("You Died!", 55.f, 45.f, 40, RED);
             EndDrawing();
             continue;
         }
-        else{ // knight is alive
+        else
+        { // knight is alive
             std::string knightsHealth = "Health: ";
             knightsHealth.append(std::to_string(knight.getHealth()), 0, 5);
             DrawText(knightsHealth.c_str(), 55.f, 45.f, 40.f, RED);
@@ -73,12 +88,20 @@ int main()
             }
         }
 
-        goblin.tick(GetFrameTime());
+        for (auto enemy : enemies)
+        {
+            enemy->tick(GetFrameTime());
+        }
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
-            if (CheckCollisionRecs(goblin.getCollisionRec(), knight.getWeaponCollisionRec())){
-                goblin.setAlive(false);
+            for (auto enemy : enemies)
+            {
+
+                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()))
+                {
+                    enemy->setAlive(false);
+                }
             }
         }
 
